@@ -30,6 +30,33 @@ ScrollTrigger.refresh();
 }
 loco()
 
+document.addEventListener("DOMContentLoaded", () => {
+  const loader = document.querySelector("#loader"); // Loader element
+  const loaderText = document.querySelector("#loader-text"); // Text inside loader
+  const images = document.querySelectorAll("img"); // Select all images
+  let loadedImages = 0;
+  const totalImages = images.length;
+
+  function updateLoader() {
+      let percentage = Math.floor((loadedImages / totalImages) * 100);
+      loaderText.textContent = `${percentage}%`; // Update percentage text
+      if (percentage === 100) {
+          gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => loader.style.display = "none" });
+      }
+  }
+
+  images.forEach((img) => {
+      if (img.complete) {
+          loadedImages++;
+          updateLoader();
+      } else {
+          img.addEventListener("load", () => {
+              loadedImages++;
+              updateLoader();
+          });
+      }
+  });
+});
 
 var clutter = "";
 
