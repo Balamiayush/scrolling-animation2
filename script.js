@@ -4,25 +4,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const images = document.querySelectorAll("img"); // Select all images
   let loadedImages = 0;
   const totalImages = images.length;
+  const fixedDuration = 2000; // 3 seconds
+  const startTime = Date.now();
 
+  // Function to update the loader
   function updateLoader() {
-      let percentage = Math.floor((loadedImages / totalImages) * 100);
-      loaderText.textContent = `${percentage}%`; // Update percentage text
-      if (percentage === 100) {
-          gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => loader.style.display = "none" });
-      }
+    const elapsedTime = Date.now() - startTime;
+    let percentage = Math.min(Math.floor((elapsedTime / fixedDuration) * 100), 100);
+    loaderText.textContent = `${percentage}%`; // Update percentage text
+
+    if (percentage === 100) {
+      gsap.to(loader, { opacity: 0, duration: 0.5,top: "-100%", onComplete: () => loader.style.display = "none" });
+    } else {
+      requestAnimationFrame(updateLoader); // Continue updating until 100%
+    }
   }
 
+  // Start the loader animation
+  updateLoader();
+
+  // Check each image for loading
   images.forEach((img) => {
-      if (img.complete) {
-          loadedImages++;
-          updateLoader();
-      } else {
-          img.addEventListener("load", () => {
-              loadedImages++;
-              updateLoader();
-          });
-      }
+    if (img.complete) {
+      loadedImages++;
+    } else {
+      img.addEventListener("load", () => {
+        loadedImages++;
+      });
+    }
   });
 });
 function loco(){
